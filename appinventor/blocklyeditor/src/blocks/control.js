@@ -42,7 +42,7 @@ Blockly.Blocks['controls_if'] = {
   category: 'Control',
   helpUrl: Blockly.Msg.LANG_CONTROLS_IF_HELPURL,
   init: function () {
-    this.setColour(Blockly.CONTROL_CATEGORY_HUE);
+    this.setColour(Blockly.BLOCK_EXERCISE_RED_HUE);
     this.appendValueInput('IF0')
         .setCheck(Blockly.Blocks.Utilities.YailTypeToBlocklyType("boolean", Blockly.Blocks.Utilities.INPUT))
         .appendField(Blockly.Msg.LANG_CONTROLS_IF_MSG_IF);
@@ -195,7 +195,7 @@ Blockly.Blocks['controls_if'] = {
 Blockly.Blocks['controls_if_if'] = {
   // If condition.
   init: function () {
-    this.setColour(Blockly.CONTROL_CATEGORY_HUE);
+    this.setColour(Blockly.BLOCK_EXERCISE_RED_HUE);
     this.appendDummyInput()
         .appendField(Blockly.Msg.LANG_CONTROLS_IF_IF_TITLE_IF);
     this.appendStatementInput('STACK');
