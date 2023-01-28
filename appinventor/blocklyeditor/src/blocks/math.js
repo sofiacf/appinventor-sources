@@ -689,7 +689,14 @@ Blockly.Blocks['math_single'] = {
       titleName: 'OP',
       value: 'ROOT'
     }
-  }, {
+  },{
+    translatedName: Blockly.Msg.LANG_MATH_SINGLE_OP_SQUARE,
+    dropDown: {
+      titleName: 'OP',
+      value: 'SQUARE'
+    }
+  },
+    {
     translatedName: Blockly.Msg.LANG_MATH_SINGLE_OP_ABSOLUTE,
     dropDown: {
       titleName: 'OP',
@@ -736,6 +743,7 @@ Blockly.Blocks['math_single'] = {
 
 Blockly.Blocks.math_single.OPERATORS = function () {
   return [[Blockly.Msg.LANG_MATH_SINGLE_OP_ROOT, 'ROOT'],
+    [Blockly.Msg.LANG_MATH_SINGLE_OP_SQUARE, 'SQUARE'],
     [Blockly.Msg.LANG_MATH_SINGLE_OP_ABSOLUTE, 'ABS'],
     [Blockly.Msg.LANG_MATH_SINGLE_OP_NEG, 'NEG'],
     [Blockly.Msg.LANG_MATH_SINGLE_OP_LN, 'LN'],
@@ -748,6 +756,7 @@ Blockly.Blocks.math_single.OPERATORS = function () {
 Blockly.Blocks.math_single.TOOLTIPS = function () {
   return {
     ROOT: Blockly.Msg.LANG_MATH_SINGLE_TOOLTIP_ROOT,
+    SQUARE: Blockly.Msg.LANG_MATH_SINGLE_TOOLTIP_SQUARE,
     ABS: Blockly.Msg.LANG_MATH_SINGLE_TOOLTIP_ABS,
     NEG: Blockly.Msg.LANG_MATH_SINGLE_TOOLTIP_NEG,
     LN: Blockly.Msg.LANG_MATH_SINGLE_TOOLTIP_LN,
@@ -761,6 +770,7 @@ Blockly.Blocks.math_single.TOOLTIPS = function () {
 Blockly.Blocks.math_single.HELPURLS = function () {
   return {
     ROOT: Blockly.Msg.LANG_MATH_SINGLE_HELPURL_ROOT,
+    SQUARE: Blockly.Msg.LANG_MATH_SINGLE_HELPURL_SQUARE,
     ABS: Blockly.Msg.LANG_MATH_SINGLE_HELPURL_ABS,
     NEG: Blockly.Msg.LANG_MATH_SINGLE_HELPURL_NEG,
     LN: Blockly.Msg.LANG_MATH_SINGLE_HELPURL_LN,
@@ -785,6 +795,29 @@ Blockly.Blocks['math_abs'] = {
         .setCheck(Blockly.Blocks.Utilities.YailTypeToBlocklyType("number", Blockly.Blocks.Utilities.INPUT))
         .appendField(new Blockly.FieldDropdown(Blockly.Blocks.math_single.OPERATORS), 'OP');
     this.setFieldValue('ABS', "OP");
+    // Assign 'this' to a variable for use in the tooltip closure below.
+    var thisBlock = this;
+    this.setTooltip(function () {
+      var mode = thisBlock.getFieldValue('OP');
+      return Blockly.Blocks.math_single.TOOLTIPS()[mode];
+    });
+  }
+};
+
+Blockly.Blocks['math_square'] = {
+  // Advanced math operators with single operand.
+  category: 'Math',
+  helpUrl: function () {
+    var mode = this.getFieldValue('OP');
+    return Blockly.Blocks.math_single.HELPURLS()[mode];
+  },
+  init: function () {
+    this.setColour(Blockly.MATH_CATEGORY_HUE);
+    this.setOutput(true, Blockly.Blocks.Utilities.YailTypeToBlocklyType("number", Blockly.Blocks.Utilities.OUTPUT));
+    this.appendValueInput('NUM')
+        .setCheck(Blockly.Blocks.Utilities.YailTypeToBlocklyType("number", Blockly.Blocks.Utilities.INPUT))
+        .appendField(new Blockly.FieldDropdown(Blockly.Blocks.math_single.OPERATORS), 'OP');
+    this.setFieldValue("SQUARE", "OP");
     // Assign 'this' to a variable for use in the tooltip closure below.
     var thisBlock = this;
     this.setTooltip(function () {

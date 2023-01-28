@@ -188,6 +188,7 @@ Blockly.Yail['math_single'] = function() {
 
 Blockly.Yail.math_single.OPERATORS = {
   ROOT: ['sqrt', 'sqrt', Blockly.Yail.ORDER_NONE],
+  SQUARE: ['expt', Blockly.Yail.ORDER_NONE],
   ABS: ['abs', 'abs', Blockly.Yail.ORDER_NONE],
   NEG: ['-', 'negate', Blockly.Yail.ORDER_NONE],
   LN: ['log', 'log', Blockly.Yail.ORDER_NONE],
@@ -195,6 +196,28 @@ Blockly.Yail.math_single.OPERATORS = {
   ROUND: ['yail-round', 'round', Blockly.Yail.ORDER_NONE],
   CEILING: ['yail-ceiling', 'ceiling', Blockly.Yail.ORDER_NONE],
   FLOOR: ['yail-floor', 'floor', Blockly.Yail.ORDER_NONE]
+};
+
+Blockly.Yail['math_square'] = function() {
+  var mode = this.getFieldValue('OP');
+  var tuple = Blockly.Yail.math_single.OPERATORS[mode];
+  var operator = tuple[0];
+  var order = tuple[1];
+  var argument0 = Blockly.Yail.valueToCode(this, 'NUM', order) || 1;
+  var argument1 = 2
+  var code = Blockly.Yail.YAIL_CALL_YAIL_PRIMITIVE + operator
+      + Blockly.Yail.YAIL_SPACER;
+  code = code + Blockly.Yail.YAIL_OPEN_COMBINATION
+      + Blockly.Yail.YAIL_LIST_CONSTRUCTOR + Blockly.Yail.YAIL_SPACER
+      + argument0 + Blockly.Yail.YAIL_SPACER + argument1
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+  code = code + Blockly.Yail.YAIL_SPACER + Blockly.Yail.YAIL_QUOTE
+      + Blockly.Yail.YAIL_OPEN_COMBINATION;
+  code += (mode == "EQ" || mode == "NEQ" ? "any any" : "number number" )
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION + Blockly.Yail.YAIL_SPACER;
+  code = code + Blockly.Yail.YAIL_DOUBLE_QUOTE + operator
+      + Blockly.Yail.YAIL_DOUBLE_QUOTE + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+  return [code, Blockly.Yail.ORDER_ATOMIC];
 };
 
 Blockly.Yail['math_abs'] = function() {
