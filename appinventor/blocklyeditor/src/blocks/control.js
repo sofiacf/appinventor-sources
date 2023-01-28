@@ -229,6 +229,35 @@ Blockly.Blocks['controls_if_else'] = {
   }
 };
 
+Blockly.Blocks['controls_choose3'] = {
+  category: 'Control',
+  init: function () {
+    this.setColour(Blockly.CONTROL_CATEGORY_HUE);
+    this.setOutput(true, null);
+    this.appendValueInput('TEST')
+        .setCheck(Blockly.Blocks.Utilities.YailTypeToBlocklyType("number", Blockly.Blocks.Utilities.INPUT))
+        .appendField(Blockly.Msg.LANG_CONTROLS_CHOOSE3_TITLE)
+        .appendField(Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_TEST)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.appendValueInput('POSRETURN')
+        .appendField(Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_POS_RETURN)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.appendValueInput('ZERORETURN')
+        .appendField(Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_ZERO_RETURN)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.appendValueInput('NEGRETURN')
+        .appendField(Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_NEG_RETURN)
+        .setAlign(Blockly.ALIGN_RIGHT);
+    this.setTooltip(Blockly.Msg.LANG_CONTROLS_CHOOSE3_TOOLTIP);
+  },
+  typeblock: [{
+    translatedName: Blockly.Msg.LANG_CONTROLS_CHOOSE3_TITLE + ' ' +
+        Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_POS_RETURN + ' ' +
+        Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_ZERO_RETURN + ' ' +
+        Blockly.Msg.LANG_CONTROLS_CHOOSE3_INPUT_NEG_RETURN
+  }]
+}
+
 Blockly.Blocks['controls_forRange'] = {
   // For range.
   category: 'Control',

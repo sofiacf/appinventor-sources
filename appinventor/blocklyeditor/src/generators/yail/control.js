@@ -74,6 +74,44 @@ Blockly.Yail['controls_choose'] = function() {
   return [code,Blockly.Yail.ORDER_ATOMIC];
 };
 
+Blockly.Yail['controls_choose3'] = function () {
+  //  Has 4 input sockets and chooses between one of three values (the final 3 sockets)
+  //  based on whether the value of the test expression in the first socket is positive, zero, or negative.
+  //  Only the test expression and chosen expression should be evaluated; the other two expressions should not be.
+  var test = Blockly.Yail.valueToCode(this, 'TEST', Blockly.Yail.ORDER_NONE)  || Blockly.Yail.YAIL_FALSE;
+  var posReturn = Blockly.Yail.valueToCode(this, 'POSRETURN', Blockly.Yail.ORDER_NONE)  || Blockly.Yail.YAIL_FALSE;
+  var zeroReturn = Blockly.Yail.valueToCode(this, 'ZERORETURN', Blockly.Yail.ORDER_NONE) || Blockly.Yail.YAIL_FALSE;
+  var negReturn = Blockly.Yail.valueToCode(this, 'NEGRETURN', Blockly.Yail.ORDER_NONE) || Blockly.Yail.YAIL_FALSE;
+  var posCode = Blockly.Yail.YAIL_CALL_YAIL_PRIMITIVE + 'positive?'
+      + Blockly.Yail.YAIL_SPACER;
+  posCode = posCode + Blockly.Yail.YAIL_OPEN_COMBINATION + Blockly.Yail.YAIL_LIST_CONSTRUCTOR;
+  posCode = posCode + Blockly.Yail.YAIL_SPACER + test + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+  posCode = posCode + Blockly.Yail.YAIL_SPACER + Blockly.Yail.YAIL_QUOTE
+      + Blockly.Yail.YAIL_OPEN_COMBINATION + "number"
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION + Blockly.Yail.YAIL_SPACER;
+  posCode = posCode + Blockly.Yail.YAIL_DOUBLE_QUOTE + 'is positive?'
+      + Blockly.Yail.YAIL_DOUBLE_QUOTE + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+
+  var zeroCode = Blockly.Yail.YAIL_CALL_YAIL_PRIMITIVE + 'zero?'
+      + Blockly.Yail.YAIL_SPACER;
+  zeroCode = zeroCode + Blockly.Yail.YAIL_OPEN_COMBINATION + Blockly.Yail.YAIL_LIST_CONSTRUCTOR;
+  zeroCode = zeroCode + Blockly.Yail.YAIL_SPACER + test + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+  zeroCode = zeroCode + Blockly.Yail.YAIL_SPACER + Blockly.Yail.YAIL_QUOTE
+      + Blockly.Yail.YAIL_OPEN_COMBINATION + "number"
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION + Blockly.Yail.YAIL_SPACER;
+  zeroCode = zeroCode + Blockly.Yail.YAIL_DOUBLE_QUOTE + 'is zero?'
+      + Blockly.Yail.YAIL_DOUBLE_QUOTE + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+
+  var code = Blockly.Yail.YAIL_IF + posCode;
+  code = code + Blockly.Yail.YAIL_SPACER + posReturn;
+  code = code + Blockly.Yail.YAIL_IF + zeroCode;
+  code = code + Blockly.Yail.YAIL_SPACER + zeroReturn
+      + Blockly.Yail.YAIL_SPACER + negReturn
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION
+      + Blockly.Yail.YAIL_CLOSE_COMBINATION;
+  return [code,Blockly.Yail.ORDER_ATOMIC];
+}
+
 // [lyn, 12/27/2012]
 Blockly.Yail['controls_forEach'] = function() {
   // For each loop.
