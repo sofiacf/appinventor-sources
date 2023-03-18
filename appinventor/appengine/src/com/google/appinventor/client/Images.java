@@ -614,6 +614,9 @@ public interface Images extends Resources {
   @Source("com/google/appinventor/images/colors.png")
   ImageResource colors();
 
+  @Source("com/google/appinventor/images/code.png")
+  ImageResource code();
+
   /**
    * Built in drawer item: variables
    */

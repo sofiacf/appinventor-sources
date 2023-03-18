@@ -79,7 +79,7 @@ public final class BlockSelectorBox extends Box {
 
   private static final Set<String> BUILTIN_DRAWER_NAMES = new HashSet<String>(
       Arrays.asList("Control", "Logic", "Math", "Text", "Lists", "Dictionaries", "Colors",
-          "Variables", "Procedures"));
+          "Variables", "Procedures", "Code"));
 
   private static final Images images = Ode.getImageBundle();
   private static final Map<String, ImageResource> bundledImages = Maps.newHashMap();
@@ -142,6 +142,7 @@ public final class BlockSelectorBox extends Box {
     bundledImages.put("Variables", images.variables());
     bundledImages.put("Procedures", images.procedures());
     bundledImages.put("Dictionaries", images.dictionaries());
+    bundledImages.put("Code", images.code());
   }
 
   /**
@@ -205,6 +206,8 @@ public final class BlockSelectorBox extends Box {
        name = MESSAGES.builtinProceduresLabel();
     } else if (drawerName.equals("Dictionaries")) {
        name = MESSAGES.builtinDictionariesLabel();
+    } else if (drawerName.equals("Code")) {
+       name = MESSAGES.builtinCodeLabel();
     } else {
        name = drawerName;
     }
