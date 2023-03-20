@@ -95,6 +95,7 @@
     "./src/warningHandler.js",
     "./src/field_procedure.js",
     "./src/field_textblockinput.js",
+    "./src/field_code_editor.js",
     "./src/field_invalid_dropdown.js",
     "./src/warningIndicator.js",
     "./src/exportBlocksImage.js",
@@ -122,6 +123,7 @@
 
     //blocks files
     './src/blocks/control.js',
+    './src/blocks/code.js',
     './src/blocks/logic.js',
     './src/blocks/text.js',
     './src/blocks/lists.js',

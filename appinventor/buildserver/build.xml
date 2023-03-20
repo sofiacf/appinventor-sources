@@ -68,6 +68,10 @@
       <!-- Map assets for build server -->
       <fileset dir="${lib.dir}/leaflet" includes="leaflet.js,leaflet.css" />
       <fileset dir="${lib.dir}/leaflet/assets" includes="*"/>
+      <!-- CodeMirror assets for build server-->
+      <fileset dir="${lib.dir}/codemirror-5.49.2/lib" includes="codemirror.js,codemirror.css"/>
+      <fileset dir="${lib.dir}/codemirror-5.49.2/mode/venbrace" includes="venbrace.js"/>
+      <fileset dir="${lib.dir}/codemirror-5.49.2/addon/edit" includes="*"/>
       <!-- Component/extension assets (for testing) -->
       <fileset dir="${appinventor.dir}/components/src" includes="**/assets/*"/>
     </copy>

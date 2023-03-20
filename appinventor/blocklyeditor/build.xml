@@ -104,14 +104,17 @@
 		</java>
 	</target>
 
-        <target name="CheckBlocklyCompile">
-          <uptodate property="BlocklyCompile.uptodate" targetfile="${public.build.dir}/blockly-all.js">
-            <srcfiles dir="src/" includes="**/*.js" />
-            <srcfiles dir="${blockly.src.dir}/" includes="core/**/*.js" />
-            <srcfiles dir="${lib.dir}/closure-library/" includes="closure/goog/**/*.js" />
-            <srcfiles dir="${basedir}" includes="${blockly.config}" />
-          </uptodate>
-        </target>
+    <target name="CheckBlocklyCompile">
+        <uptodate property="BlocklyCompile.uptodate" targetfile="${public.build.dir}/blockly-all.js">
+            <srcfiles dir="src/" includes="**/*.js"/>
+            <srcfiles dir="${blockly.src.dir}/" includes="core/**/*.js"/>
+            <srcfiles dir="${lib.dir}/closure-library/" includes="closure/goog/**/*.js"/>
+            <srcfiles dir="${lib.dir}/codemirror-5.49.2/" includes="lib/codemirror.js"/>
+            <srcfiles dir="${lib.dir}/codemirror-5.49.2/" includes="mode/venbrace/venbrace.js"/>
+            <srcfiles dir="${lib.dir}/codemirror-5.49.2/" includes="addon/edit/*.js"/>
+            <srcfiles dir="${basedir}" includes="${blockly.config}"/>
+        </uptodate>
+    </target>
 
 	<target name="BlocklyCompile"
 		      description="For now, compiling the Blockly editor means cat-ing its javascript together with the relevant javascript in the Blockly library"
