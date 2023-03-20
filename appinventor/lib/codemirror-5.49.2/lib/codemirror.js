@@ -6,7 +6,6 @@
 //
 // You can find some technical background for some of the code below
 // at http://marijnhaverbeke.nl/blog/#cm-internals .
-
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -533,12 +532,9 @@
   var on = function(emitter, type, f) {
     if (emitter.addEventListener) {
       emitter.addEventListener(type, f, false);
-      // console.log("536");
     } else if (emitter.attachEvent) {
       emitter.attachEvent("on" + type, f);
-      console.log("538");
     } else {
-      // console.log("540");
       var map$$1 = emitter._handlers || (emitter._handlers = {});
       map$$1[type] = (map$$1[type] || noHandlers).concat(f);
     }

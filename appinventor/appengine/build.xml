@@ -190,6 +190,9 @@
         <include name="closure-library/closure/goog/css/dialog.css"/>
         <include name="closure-library/closure/goog/css/hsvapalette.css"/>
         <include name="closure-library/closure/goog/deps.js"/>
+        <include name="codemirror-5.49.2/lib/*"/>
+        <include name="codemirror-5.49.2/addon/edit/*"/>
+        <include name="codemirror-5.49.2/mode/venbrace/venbrace.js"/>
       </fileset>
       <fileset dir="${docs.dir}/html/static">
         <include name="js/*"/>
