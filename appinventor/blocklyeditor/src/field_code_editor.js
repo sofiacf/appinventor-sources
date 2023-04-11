@@ -14,6 +14,8 @@
 
 goog.provide('Blockly.FieldCodeEditor');
 goog.require('goog.events.KeyCodes');
+goog.require('goog.dom');
+goog.require('goog.dom.TagName');
 
 Blockly.FieldCodeEditor = function (text, opt_validator) {
   // Call parent's constructor.
@@ -26,6 +28,8 @@ goog.inherits(Blockly.FieldCodeEditor, Blockly.FieldTextInput);
 Blockly.FieldCodeEditor.FONTSIZE = 11;
 
 Blockly.FieldCodeEditor.prototype.maxLines_ = Infinity;
+
+Blockly.FieldCodeEditor.prototype.maxDisplayLength = Infinity;
 
 Blockly.FieldCodeEditor.prototype.isOverflowedY_ = false;
 
@@ -63,7 +67,8 @@ Blockly.FieldCodeEditor.prototype.initView_ = function () {
 Blockly.FieldCodeEditor.prototype.createTextElement_ = function () {
   this.textElement_ = Blockly.utils.createSvgElement('text', {
     'class': 'blocklyText',
-    'y': this.size_.height - 12.5
+    'y': this.size_.height - 12.5,
+    'width': 100
   }, this.fieldGroup_);
   this.textContent_ = document.createTextNode('');
   this.textElement_.appendChild(this.textContent_);
@@ -126,19 +131,12 @@ Blockly.FieldCodeEditor.prototype.onHtmlInputKeyDown_ = function (e) {
 };
 
 Blockly.FieldCodeEditor.prototype.render_ = function () {
-  var block = this.sourceBlock_;
-  if (!block) {
-    new Error("No source block found! I don't think this should happen....");
-  }
   if (!this.visible_) {
     this.size_.width = 0;
     return;
   }
 
-  var currentChild;
-  while (currentChild = this.textGroup_.firstChild) {
-    this.textGroup_.removeChild(currentChild);
-  }
+  goog.dom.removeChildren(this.textGroup_);
 
   // Add in text elements into the group.
   var lines = this.getDisplayText_().split('\n');
@@ -188,7 +186,7 @@ Blockly.FieldCodeEditor.prototype.render_ = function () {
 
 Blockly.FieldCodeEditor.prototype.updateSize_ = function () {
   var nodes = this.textGroup_.childNodes;
-  var totalWidth = 0;
+  var totalWidth = 100;
   var totalHeight = 0;
   for (var i = 0; i < nodes.length; i++) {
     var tspan = nodes[i];
@@ -215,7 +213,7 @@ Blockly.FieldCodeEditor.prototype.updateSize_ = function () {
         totalWidth = lineWidth;
       }
     }
-    var scrollbarWidth = this.htmlInput_.offsetWidth - this.htmlInput_.clientWidth;
+    var scrollbarWidth = editor.offsetWidth - editor.clientWidth;
     totalWidth += scrollbarWidth;
   }
 
@@ -227,24 +225,45 @@ Blockly.FieldCodeEditor.prototype.updateSize_ = function () {
   this.size_.height = totalHeight;
 }
 
-Blockly.FieldCodeEditor.prototype.showEditor_ = function (_opt_e) { // TODO: handle "quietInput"
-  this.createWidget_();
+Blockly.FieldCodeEditor.prototype.showEditor_ = function (opt_quietInput) {
+  this.workspace_ = this.sourceBlock_.workspace;
+  var quietInput = opt_quietInput || false;
+  if (!quietInput && (goog.userAgent.MOBILE || goog.userAgent.ANDROID ||
+    goog.userAgent.IPAD)) {
+    // Mobile browsers have issues with in-line textareas (focus & keyboards).
+    var fieldText = this;
+    Blockly.prompt(Blockly.Msg.CHANGE_VALUE_TITLE, this.text_,
+      function(newValue) {
+        if (fieldText.sourceBlock_) {
+          newValue = fieldText.callValidator(newValue);
+        }
+        fieldText.setValue(newValue);
+      });
+    return;
+  }
+
+  var editor = this.createWidget_();
+  if (!quietInput) {
+    editor.focus();
+  }
   this.render_();
 };
 
-Blockly.FieldCodeEditor.prototype.createWidget_ = function () {
-  Blockly.WidgetDiv.show(this, this.sourceBlock_.RTL, this.widgetDispose_);
-  var div = Blockly.WidgetDiv.DIV;
-  var scale = this.workspace_.scale;
+Blockly.FieldCodeEditor.prototype.disposeWidget_ = function () {
+  this.isBeingEdited_ = false;
+  return this.widgetDispose_();
+}
 
-  var htmlInput = document.createElement('textarea');
-  htmlInput.className = 'blocklyHtmlInput blocklyHtmlTextAreaInput';
-  var fontSize = (Blockly.FieldCodeEditor.FONTSIZE * this.workspace_.scale) + 'pt';
-  htmlInput.style.fontSize = fontSize;
-  var borderRadius = 4 * scale + 'px';
-  htmlInput.style.borderRadius = borderRadius;
-  var lineHeight = 12.5;
-  htmlInput.style.lineHeight = lineHeight * scale + 'px';
+Blockly.FieldCodeEditor.prototype.createWidget_ = function () {
+  Blockly.WidgetDiv.show(this, this.sourceBlock_.RTL, this.disposeWidget_());
+  var div = Blockly.WidgetDiv.DIV;
+  // Create the input.
+  var htmlInput =
+    goog.dom.createDom(goog.dom.TagName.TEXTAREA, 'blocklyHtmlInput blocklyHtmlTextAreaInput');
+  htmlInput.setAttribute('spellcheck',this.spellcheck_);
+  this.styleInput_(div, htmlInput);
+  /** @type {!HTMLInputElement} */
+  Blockly.FieldTextInput.htmlInput_ = htmlInput;
   div.appendChild(htmlInput);
   htmlInput.value = htmlInput.defaultValue = this.text_;
   htmlInput.oldValue_ = null;
@@ -259,16 +278,69 @@ Blockly.FieldCodeEditor.prototype.createWidget_ = function () {
     cursorBlinkRate: 0
   });
   this.resizeEditor_();
+  this.bindEvents(htmlInput);
+
   var thisField = this;
   editor.on('change', function () {
     thisField.setValue(editor.getValue());
+    div.style.width = editor.getWrapperElement().offsetWidth;
+    div.style.height = editor.getWrapperElement().offsetHeight;
   });
   editor.on('refresh', function () {
   });
-  editor.on('blur', function () {
-    editor.save();
-    editor.toTextArea();
-  });
-  editor.focus();
-  return htmlInput;
+  editor.on('blur', editor.save);
+  return editor;
 };
+
+Blockly.FieldCodeEditor.prototype.styleInput_ = function (div, htmlInput) {
+  var scale = this.workspace_.scale;
+  var fontSize =
+    (Blockly.FieldCodeEditor.FONTSIZE * scale) + 'pt';
+  div.style.fontSize = fontSize;
+  htmlInput.style.fontSize = fontSize;
+
+  var borderRadius = 4 * scale + 'px';
+  htmlInput.style.borderRadius = borderRadius;
+}
+
+Blockly.FieldCodeEditor.prototype.bindEvents = function (htmlInput) {
+  // Bind to keydown
+  htmlInput.onKeyDownWrapper_ =
+    Blockly.bindEventWithChecks_(htmlInput, 'keydown', this,
+      this.onHtmlInputKeyDown_);
+  // Bind to keyup -- trap Enter; resize after every keystroke.
+  htmlInput.onKeyUpWrapper_ =
+    Blockly.bindEventWithChecks_(htmlInput, 'keyup', this,
+      this.onHtmlInputChange_);
+  // Bind to keyPress -- repeatedly resize when holding down a key.
+  htmlInput.onKeyPressWrapper_ =
+    Blockly.bindEventWithChecks_(htmlInput, 'keypress', this,
+      this.onHtmlInputChange_);
+  htmlInput.onWorkspaceChangeWrapper_ = this.resizeEditor_.bind(this);
+  this.workspace_.addChangeListener(htmlInput.onWorkspaceChangeWrapper_);
+}
+
+Blockly.FieldCodeEditor.prototype.resizeEditor_ = function () {
+  var div = Blockly.WidgetDiv.DIV;
+  var xy = this.getAbsoluteXY_();
+  // In RTL mode block fields and LTR input fields the left edge moves,
+  // whereas the right edge is fixed.  Reposition the editor.
+  if (this.sourceBlock_.RTL) {
+    var borderBBox = this.getScaledBBox_();
+    xy.x += borderBBox.width;
+    xy.x -= div.offsetWidth;
+  }
+  // Shift by a few pixels to line up exactly.
+  xy.y += 1;
+  if (goog.userAgent.GECKO && Blockly.WidgetDiv.DIV.style.top) {
+    // Firefox mis-reports the location of the border by a pixel
+    // once the WidgetDiv is moved into position.
+    xy.x -= 1;
+    xy.y -= 1;
+  }
+  if (goog.userAgent.WEBKIT) {
+    xy.y -= 3;
+  }
+  div.style.left = xy.x + 'px';
+  div.style.top = xy.y + 'px';
+}
